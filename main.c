@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+GtkStack        *stack;
 GtkBuilder      *builder; 
 GtkWidget       *window;
 
@@ -27,6 +28,7 @@ void login(const char *email, const char *senha){
   g_print("Password : %s\n",senha);
   if((strcmp(email, "admin")  == 0) && (strcmp(senha, "admin")  == 0)){
     mensagem("Bem vindo!", "Usuário empresa logada com sucesso!", "emblem-default");
+    gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
   }else{
     mensagem("Aviso", "Email ou senha incorretos!", "dialog-error");
   }
@@ -121,6 +123,7 @@ int main (int argc, char *argv[]) {
     GtkWidget *connectButton;
 
     gtk_builder_connect_signals(builder, NULL);
+    stack = GTK_STACK(gtk_builder_get_object(builder, "stack"));
     window = GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
 
     gtk_widget_show(window);                
