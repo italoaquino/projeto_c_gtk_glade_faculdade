@@ -13,18 +13,19 @@ void button_cadastrar_empresa_clicked(GtkWidget *widget, gpointer data){
 }
 
 void mensagem(char text[100], char secondary_text[100], char icon_name[100]){
-  GtkMessageDialog *mensagem_dialogo;
-  mensagem_dialogo = GTK_WIDGET(gtk_builder_get_object(builder, "mensagem"));
-  g_object_set (mensagem_dialogo, "text", text, NULL);
-  g_object_set (mensagem_dialogo, "secondary_text", secondary_text, NULL);
-  g_object_set (mensagem_dialogo,"icco_name", icon_name, NULL);
-  gtk_widget_show_all (mensagem_dialogo);
-  gtk_dialog_run(mensagem_dialogo);
-  gtk_widget_hide(mensagem_dialogo);
+  GtkDialog *dialog = GTK_DIALOG(gtk_builder_get_object(builder, "mensagem"));
+  g_object_set (dialog, "secondary_text", secondary_text, NULL);
+  g_object_set (dialog, "text", text, NULL);
+  g_object_set (dialog, "icon_name", icon_name, NULL);
+  gtk_widget_show_all(GTK_WIDGET(dialog));
+  gtk_dialog_run(dialog);
+  gtk_widget_hide(GTK_WIDGET(dialog));
 }
 
-void login(char *email, char *senha){
-  if((strcmp(email, "admin")  == 0) && (strcmp(senha, "senha")  == 0)){
+void login(const char *email, const char *senha){
+  g_print("Username : %s\n",email);
+  g_print("Password : %s\n",senha);
+  if((strcmp(email, "admin")  == 0) && (strcmp(senha, "admin")  == 0)){
     mensagem("Bem vindo!", "Usuário empresa logada com sucesso!", "emblem-default");
   }else{
     mensagem("Aviso", "Email ou senha incorretos!", "dialog-error");
@@ -38,11 +39,10 @@ static void on_button_login_clicked(GtkWidget *widget, gpointer data){
     passwordInput = GTK_WIDGET(gtk_builder_get_object(builder, "email"));
     usernameInput = GTK_WIDGET(gtk_builder_get_object(builder, "senha"));
 
-    const gchar *text1 = gtk_entry_get_text(GTK_ENTRY(passwordInput));
-    const gchar *text2 = gtk_entry_get_text(GTK_ENTRY(usernameInput));
-
-    g_print("Username : %s\n",text2);
-    g_print("Password : %s\n",text1);
+    const char *email = gtk_entry_get_text(GTK_ENTRY(passwordInput));
+    const char *senha = gtk_entry_get_text(GTK_ENTRY(usernameInput));
+    login(email, senha);
+    
 }
 void button_voltar_tela_cadastro_empresa_clicked(GtkWidget *widget, gpointer data){
   gtk_main_quit();
