@@ -29,6 +29,37 @@ void button_cadastrar_empresa_clicked(GtkWidget *widget, gpointer data)
   gtk_stack_set_visible_child_name(stack, "view_cadastro_empresa");
 }
 
+
+// char *encrypt(char* decrypt) {
+//     int length = strlen(decrypt) + 1;
+//     char* code = malloc(length * 3);
+    
+//     int c = -1;
+//     for (int d = 0; d < length; d++)
+//     {
+//         code[++c] = '*'; // or rand()%94+33;
+//         code[++c] = '*'; // or rand()%94+33;
+//         code[++c] = decrypt[d] - c + length + 1;
+//     }
+
+//     code[c] = '\0';
+//     return code;
+// }
+
+// char* decrypt(char* code) {
+//     int length = strlen(code) / 3 + 1;
+//     char* decrypt = malloc(length);
+
+//     int d = 0;
+//     for (int c = 2; c < strlen(code); c+=3)
+//     {
+//         decrypt[d++] = code[c] + c - length - 1;
+//     }
+
+//     decrypt[d] = '\0';
+//     return decrypt;
+// }
+
 void mensagem(char text[100], char secondary_text[100], char icon_name[100])
 {
   GtkDialog *dialog = GTK_DIALOG(gtk_builder_get_object(builder, "mensagem"));
@@ -44,15 +75,52 @@ void login(const char *email, const char *senha)
 {
   g_print("Username : %s\n", email);
   g_print("Password : %s\n", senha);
-  if ((strcmp(email, "admin") == 0) && (strcmp(senha, "admin") == 0))
+  int rc;
+  sqlite3_stmt *handle_sql = 0;
+
+  char sqlStr[256];
+
+  char comando_sql[] = "select * from tb_empresa e where e.nomeEmpresa = ? and senha = ?";
+
+  rc = sqlite3_prepare_v2(db, comando_sql, -1, &handle_sql, 0);
+
+  if (rc != SQLITE_OK)
   {
-    mensagem("Bem vindo!", "Usuário logada com sucesso!", "emblem-default");
-    gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
+    printf("Erro no prepare : %s\n", sqlite3_errmsg(db));
+    mensagem("Aviso", "Ocorreu um erro!", "dialog-emblem-deafult");
   }
   else
   {
-    mensagem("Aviso", "Email ou senha incorretos!", "dialog-error");
+    rc = sqlite3_bind_text(handle_sql, 1, email, -1, NULL);
+    rc = sqlite3_bind_text(handle_sql, 2, senha, -1, NULL);
+
+    if (rc != SQLITE_OK)
+    {
+      printf("Erro no prepare : %s\n", sqlite3_errmsg(db));
+      mensagem("Aviso", "Ocorreu um erro!", "dialog-emblem-deafult");
+    }
+    else
+    {
+      rc = sqlite3_step(handle_sql);
+
+      if(rc == SQLITE_ROW){
+        mensagem("Bem vindo!", "Usuário logada com sucesso!", "emblem-default");
+        gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
+      }else{
+        mensagem("Aviso", "Email ou senha incorretos!", "dialog-error");
+      }
+    }
   }
+
+
+  // if ((strcmp(email, "admin") == 0) && (strcmp(senha, "admin") == 0))
+  // {
+  //   mensagem("Bem vindo!", "Usuário logada com sucesso!", "emblem-default");
+  //   gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
+  // }
+  // else
+  // {
+  // }
 }
 
 static void on_button_login_clicked(GtkWidget *widget, gpointer data)
@@ -72,9 +140,7 @@ void button_voltar_tela_cadastro_empresa_clicked(GtkWidget *widget, gpointer dat
 void button_salvar_empresa_clicked(GtkWidget *widget, gpointer data)
 {
 
-  char *zErrMsg = 0;
   int rc;
-  char *sql;
   GtkWidget *nomeEmpresaInput;
   GtkWidget *nomeResponsavelEmpresaInput;
   GtkWidget *cpfResponsavelEmpresaInput;
@@ -199,8 +265,6 @@ void button_salvar_empresa_clicked(GtkWidget *widget, gpointer data)
   }
   else
   {
-
-    // telefone, rua, numero, bairro, cidade, estado, cep, email, senha
     rc = sqlite3_bind_text(handle_sql, 1, nomeEmpresa, -1, NULL);
     rc = sqlite3_bind_text(handle_sql, 2, nomeResponsavel, -1, NULL);
     rc = sqlite3_bind_text(handle_sql, 3, cpfReponsavel, -1, NULL);
@@ -226,6 +290,7 @@ void button_salvar_empresa_clicked(GtkWidget *widget, gpointer data)
     {
       rc = sqlite3_step(handle_sql);
       mensagem("Aviso", "Empresa criada om sucesso", "dialog-emblem-deafult");
+      gtk_stack_set_visible_child_name(stack, "view_login");
     }
   }
 }
