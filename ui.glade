@@ -219,7 +219,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="nome_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="margin-top">3</property>
@@ -232,7 +232,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="nome_responsavel_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="input-purpose">alpha</property>
@@ -387,7 +387,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="cpf_responsavel_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                   </object>
@@ -397,7 +397,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="cnpj_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                   </object>
@@ -407,7 +407,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="razao_social_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                   </object>
@@ -417,7 +417,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="nome_fantasia_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                   </object>
@@ -427,7 +427,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="telefone_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="input-purpose">phone</property>
@@ -438,7 +438,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="rua_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                   </object>
@@ -448,7 +448,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="numero_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                   </object>
@@ -458,7 +458,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="bairro_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                   </object>
@@ -468,7 +468,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="cidade_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                   </object>
@@ -478,7 +478,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="estado_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                   </object>
@@ -488,7 +488,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="cep_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                   </object>
@@ -498,7 +498,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="email_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="input-purpose">email</property>
@@ -509,7 +509,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="senha_empresa">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                   </object>
@@ -533,7 +533,7 @@
                 <property name="layout-style">center</property>
                 <child>
                   <object class="GtkButton" id="button_voltar_tela_cadastro_empresa">
-                    <property name="label">gtk-quit</property>
+                    <property name="label">gtk-go-back</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
@@ -821,6 +821,7 @@
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="use-stock">True</property>
+                    <property name="always-show-image">True</property>
                     <signal name="clicked" handler="button_return_home_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -1062,19 +1063,13 @@
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
+        <property name="halign">center</property>
+        <property name="valign">center</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
             <property name="homogeneous">True</property>
-            <property name="layout-style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
+            <property name="layout-style">center</property>
           </object>
           <packing>
             <property name="expand">False</property>
