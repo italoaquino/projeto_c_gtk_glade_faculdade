@@ -7,7 +7,7 @@ GtkStack *stack;
 GtkBuilder *builder;
 GtkWidget *window;
 sqlite3 *db = 0;
-int id = 0;
+int idEmpresa;
 
 static int callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
@@ -30,36 +30,6 @@ void button_cadastrar_empresa_clicked(GtkWidget *widget, gpointer data)
 }
 
 
-// char *encrypt(char* decrypt) {
-//     int length = strlen(decrypt) + 1;
-//     char* code = malloc(length * 3);
-    
-//     int c = -1;
-//     for (int d = 0; d < length; d++)
-//     {
-//         code[++c] = '*'; // or rand()%94+33;
-//         code[++c] = '*'; // or rand()%94+33;
-//         code[++c] = decrypt[d] - c + length + 1;
-//     }
-
-//     code[c] = '\0';
-//     return code;
-// }
-
-// char* decrypt(char* code) {
-//     int length = strlen(code) / 3 + 1;
-//     char* decrypt = malloc(length);
-
-//     int d = 0;
-//     for (int c = 2; c < strlen(code); c+=3)
-//     {
-//         decrypt[d++] = code[c] + c - length - 1;
-//     }
-
-//     decrypt[d] = '\0';
-//     return decrypt;
-// }
-
 void mensagem(char text[100], char secondary_text[100], char icon_name[100])
 {
   GtkDialog *dialog = GTK_DIALOG(gtk_builder_get_object(builder, "mensagem"));
@@ -73,8 +43,6 @@ void mensagem(char text[100], char secondary_text[100], char icon_name[100])
 
 void login(const char *email, const char *senha)
 {
-  g_print("Username : %s\n", email);
-  g_print("Password : %s\n", senha);
   int rc;
   sqlite3_stmt *handle_sql = 0;
 
@@ -104,6 +72,8 @@ void login(const char *email, const char *senha)
       rc = sqlite3_step(handle_sql);
 
       if(rc == SQLITE_ROW){
+
+        idEmpresa =  sqlite3_column_int(handle_sql, 0);
         mensagem("Bem vindo!", "Usuário logada com sucesso!", "emblem-default");
         gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
       }else{
@@ -111,16 +81,6 @@ void login(const char *email, const char *senha)
       }
     }
   }
-
-
-  // if ((strcmp(email, "admin") == 0) && (strcmp(senha, "admin") == 0))
-  // {
-  //   mensagem("Bem vindo!", "Usuário logada com sucesso!", "emblem-default");
-  //   gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
-  // }
-  // else
-  // {
-  // }
 }
 
 static void on_button_login_clicked(GtkWidget *widget, gpointer data)
@@ -321,28 +281,271 @@ void button_gerar_relatorio_menor_producao_clicked(GtkWidget *widget, gpointer d
 }
 void button_return_home_clicked(GtkWidget *widget, gpointer data)
 {
-  gtk_main_quit();
+  gtk_stack_set_visible_child_name(stack, "view_gerenciar_empresa");
 }
 void button_dados_empresa_clicked(GtkWidget *widget, gpointer data)
 {
-  gtk_main_quit();
+  gtk_stack_set_visible_child_name(stack, "view_gerenciar_empresa");
 }
 void button_list_funcionarios_clicked(GtkWidget *widget, gpointer data)
 {
-  gtk_main_quit();
+  gtk_stack_set_visible_child_name(stack, "view_lista_funcionarios");
+}
+void button_cadastrar_residuos_clicked(GtkWidget *widget, gpointer data)
+{
+   gtk_stack_set_visible_child_name(stack, "view_cadastrar_residuos");
+}
+void button_voltar_menu_clicked(GtkWidget *widget, gpointer data)
+{
+  gtk_stack_set_visible_child_name(stack, "view_gerenciar_empresa");
 }
 void button_list_clientes_clicked(GtkWidget *widget, gpointer data)
 {
-  gtk_main_quit();
+  gtk_stack_set_visible_child_name(stack, "view_list_clientes");
 }
 void button_gastos_residuos_clicked(GtkWidget *widget, gpointer data)
 {
-  gtk_main_quit();
+  gtk_stack_set_visible_child_name(stack, "view_residuos");
 }
 void button_return_to_home_clicked(GtkWidget *widget, gpointer data)
 {
-  gtk_main_quit();
+  gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
 }
+
+void button_listar_clientes_clicked(GtkWidget *widget, gpointer data)
+{
+  //gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
+}
+
+void button_cadastrar_clientes_clicked(GtkWidget *widget, gpointer data)
+{
+  gtk_stack_set_visible_child_name(stack, "view_cadastrar_clientes");
+}
+void button_listar_informacao_empresa_clicked(GtkWidget *widget, gpointer data)
+{
+  gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
+}
+void on_button_retornar_gerenciamento_clicked(GtkWidget *widget, gpointer data)
+{
+  gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
+}
+
+void button_adicionar_cliente_clicked(GtkWidget *widget, gpointer data)
+{
+  int rc;
+  GtkWidget *nomeInput;
+  GtkWidget *cpfInput;
+
+  nomeInput = GTK_WIDGET(gtk_builder_get_object(builder, "cliente_nom"));
+  cpfInput = GTK_WIDGET(gtk_builder_get_object(builder, "cliente_cp"));
+  
+  const char *nome = gtk_entry_get_text(GTK_ENTRY(nomeInput));
+  const char *cpf = gtk_entry_get_text(GTK_ENTRY(cpfInput));
+  
+
+  if (strcmp(nome, "") == 0)
+  {
+    mensagem("Aviso", "Campo 'Nome' obrigatório!", "dialog-error");
+  }
+  if (strcmp(cpf, "") == 0)
+  {
+    mensagem("Aviso", "Campo 'CPF' obrigatório!", "dialog-error");
+  }
+ 
+  sqlite3_stmt *handle_sql = 0;
+
+  char sqlStr[256];
+
+  char comando_sql[] = "INSERT INTO tb_clientes(idEmpresa, nome, cpf) VALUES ( ?, ? , ?)";
+
+  rc = sqlite3_prepare_v2(db, comando_sql, -1, &handle_sql, 0);
+
+  if (rc != SQLITE_OK)
+  {
+    printf("Erro no prepare : %s\n", sqlite3_errmsg(db));
+    mensagem("Aviso", "Ocorreu um erro!", "dialog-emblem-deafult");
+  }
+  else
+  {
+    //const char *id= id;
+    rc = sqlite3_bind_int(handle_sql, 1, idEmpresa);
+    rc = sqlite3_bind_text(handle_sql, 2, nome, -1, NULL);
+    rc = sqlite3_bind_text(handle_sql, 3, cpf, -1, NULL);
+
+  /*   rc = sqlite3_bind_int(handle_sql, 1, id, -1, NULL);
+    rc = sqlite3_bind_int(handle_sql, 2, quantidadeResiduos, -1, NULL);
+    rc = sqlite3_bind_int(handle_sql, 3, valorEstimado, -1, NULL); */
+    if (rc != SQLITE_OK)
+    {
+      printf("Erro no prepare : %s\n", sqlite3_errmsg(db));
+      mensagem("Aviso", "Ocorreu um erro!", "dialog-emblem-deafult");
+    }
+    else
+    {
+      rc = sqlite3_step(handle_sql);
+      mensagem("Aviso", "Cliente salvo com sucesso.", "dialog-emblem-deafult");
+      gtk_stack_set_visible_child_name(stack, "view_residuos");
+    }
+  }
+  //gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
+}
+
+void button_return_list_clientes_clicked(GtkWidget *widget, gpointer data)
+{
+  gtk_stack_set_visible_child_name(stack, "view_list_clientes");
+}
+
+void button_view_cadastrar_funcionario_clicked(GtkWidget *widget, gpointer data)
+{
+  gtk_stack_set_visible_child_name(stack, "view_cadastro_funcionarios");
+}
+
+void button_cadastrar_quantidade_residuos_clicked(GtkWidget *widget, gpointer data)
+{
+
+  int rc;
+  GtkWidget *valorEstimadoInput;
+  GtkWidget *quantidadeResiduosInput;
+
+  valorEstimadoInput = GTK_WIDGET(gtk_builder_get_object(builder, "quantidade_residuos"));
+  quantidadeResiduosInput = GTK_WIDGET(gtk_builder_get_object(builder, "valor_estimado"));
+  
+  const char *valorEstimado = gtk_entry_get_text(GTK_ENTRY(valorEstimadoInput));
+  const char *quantidadeResiduos = gtk_entry_get_text(GTK_ENTRY(quantidadeResiduosInput));
+  
+
+  if (strcmp(valorEstimado, "") == 0)
+  {
+    mensagem("Aviso", "Campo 'Valor estimado' obrigatório!", "dialog-error");
+  }
+  if (strcmp(quantidadeResiduos, "") == 0)
+  {
+    mensagem("Aviso", "Campo 'Quantidade de Resíduos' obrigatório!", "dialog-error");
+  }
+ 
+  sqlite3_stmt *handle_sql = 0;
+
+  char sqlStr[256];
+
+  char comando_sql[] = "INSERT INTO tb_residuos(idEmpresa, quantidadeResiduos, valorEstimado) VALUES ( ?, ? , ?)";
+
+  rc = sqlite3_prepare_v2(db, comando_sql, -1, &handle_sql, 0);
+
+  if (rc != SQLITE_OK)
+  {
+    printf("Erro no prepare : %s\n", sqlite3_errmsg(db));
+    mensagem("Aviso", "Ocorreu um erro!", "dialog-emblem-deafult");
+  }
+  else
+  {
+    //const char *id= id;
+    rc = sqlite3_bind_int(handle_sql, 1, idEmpresa);
+    rc = sqlite3_bind_text(handle_sql, 2, quantidadeResiduos, -1, NULL);
+    rc = sqlite3_bind_text(handle_sql, 3, valorEstimado, -1, NULL);
+
+  /*   rc = sqlite3_bind_int(handle_sql, 1, id, -1, NULL);
+    rc = sqlite3_bind_int(handle_sql, 2, quantidadeResiduos, -1, NULL);
+    rc = sqlite3_bind_int(handle_sql, 3, valorEstimado, -1, NULL); */
+    if (rc != SQLITE_OK)
+    {
+      printf("Erro no prepare : %s\n", sqlite3_errmsg(db));
+      mensagem("Aviso", "Ocorreu um erro!", "dialog-emblem-deafult");
+    }
+    else
+    {
+      rc = sqlite3_step(handle_sql);
+      mensagem("Aviso", "Quantidade salva com sucesso.", "dialog-emblem-deafult");
+      gtk_stack_set_visible_child_name(stack, "view_residuos");
+    }
+  }
+
+
+}
+void button_voltar_lista_residuos_clicked(GtkWidget *widget, gpointer data)
+{
+  gtk_stack_set_visible_child_name(stack, "view_residuos");
+}
+
+void button_return_gerenciar_clicked(GtkWidget *widget, gpointer data)
+{
+  gtk_stack_set_visible_child_name(stack, "view_gerenciar_empresa");
+}
+
+void button_cad_funcionario_clicked(GtkWidget *widget, gpointer data)
+{
+
+  int rc;
+  GtkWidget *funcionarioNomeInput;
+  GtkWidget *funcionarioCpfInput;
+
+  funcionarioNomeInput = GTK_WIDGET(gtk_builder_get_object(builder, "funcionario_nome"));
+  funcionarioCpfInput = GTK_WIDGET(gtk_builder_get_object(builder, "funcionario_cpf"));
+  
+  const char *funcionarioNome = gtk_entry_get_text(GTK_ENTRY(funcionarioNomeInput));
+  const char *funcionarioCpf = gtk_entry_get_text(GTK_ENTRY(funcionarioCpfInput));
+  
+
+  if (strcmp(funcionarioNome, "") == 0)
+  {
+    mensagem("Aviso", "Campo 'Nome' obrigatório!", "dialog-error");
+  }
+  if (strcmp(funcionarioCpf, "") == 0)
+  {
+    mensagem("Aviso", "Campo 'CPF' obrigatório!", "dialog-error");
+  }
+ 
+  sqlite3_stmt *handle_sql = 0;
+
+  char sqlStr[256];
+
+  char comando_sql[] = "INSERT INTO tb_funcionarios(idEmpresa, nome, cpf) VALUES ( ?, ? , ?)";
+
+  rc = sqlite3_prepare_v2(db, comando_sql, -1, &handle_sql, 0);
+
+  if (rc != SQLITE_OK)
+  {
+    printf("Erro no prepare : %s\n", sqlite3_errmsg(db));
+    mensagem("Aviso", "Ocorreu um erro!", "dialog-emblem-deafult");
+  }
+  else
+  {
+    //const char *id= id;
+    rc = sqlite3_bind_int(handle_sql, 1, idEmpresa);
+    rc = sqlite3_bind_text(handle_sql, 2, funcionarioNome, -1, NULL);
+    rc = sqlite3_bind_text(handle_sql, 3, funcionarioCpf, -1, NULL);
+
+    if (rc != SQLITE_OK)
+    {
+      printf("Erro no prepare : %s\n", sqlite3_errmsg(db));
+      mensagem("Aviso", "Ocorreu um erro!", "dialog-emblem-deafult");
+    }
+    else
+    {
+      rc = sqlite3_step(handle_sql);
+      mensagem("Aviso", "Funcionário salvo com sucesso.", "dialog-emblem-deafult");
+      gtk_stack_set_visible_child_name(stack, "view_residuos");
+    }
+  }
+
+
+  //gtk_stack_set_visible_child_name(stack, "view_residuos");
+}
+
+void button_listar_funcionarios_clicked(GtkWidget *widget, gpointer data)
+{
+  //gtk_stack_set_visible_child_name(stack, "view_residuos");
+}
+
+void button_voltar_gerenciamento_menu_clicked(GtkWidget *widget, gpointer data)
+{
+  gtk_stack_set_visible_child_name(stack, "view_gerenciar_empresa");
+}
+
+void button_return_lista_funcionarios_clicked(GtkWidget *widget, gpointer data)
+{
+  gtk_stack_set_visible_child_name(stack, "view_lista_funcionarios");
+}
+
 
 void initializeSqlite()
 {
@@ -386,6 +589,68 @@ void initializeSqlite()
   {
     fprintf(stdout, "Table created successfully\n");
   }
+
+   sql = "CREATE TABLE tb_residuos("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "idEmpresa      INTEGER NOT NULL,"
+        "quantidadeResiduos         int    NOT NULL,"
+        "valorEstimado          int    NOT NULL,"
+        "dataCadastro datetime default current_timestamp,"
+        "FOREIGN KEY (idEmpresa) REFERENCES tb_empresa (id))";
+
+  rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+
+  if (rc != SQLITE_OK)
+  {
+    fprintf(stderr, "SQL error: %s\n", zErrMsg);
+    sqlite3_free(zErrMsg);
+  }
+  else
+  {
+    fprintf(stdout, "Table created successfully\n");
+  }
+
+
+   sql = "CREATE TABLE tb_clientes("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "idEmpresa   int    NOT NULL,"
+        "nome        TEXT    NOT NULL,"
+        "dataInicio datetime default current_timestamp,"
+        "cpf        TEXT    NOT NULL,"
+        "FOREIGN KEY (idEmpresa) REFERENCES tb_empresa (id));";
+
+  rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+
+  if (rc != SQLITE_OK)
+  {
+    fprintf(stderr, "SQL error: %s\n", zErrMsg);
+    sqlite3_free(zErrMsg);
+  }
+  else
+  {
+    fprintf(stdout, "Table created successfully\n");
+  }
+
+
+   sql = "CREATE TABLE tb_funcionarios("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "idEmpresa   int    NOT NULL,"
+        "nome        TEXT    NOT NULL,"
+        "dataInicio datetime default current_timestamp,"
+        "cpf        TEXT    NOT NULL,"
+        "FOREIGN KEY (idEmpresa) REFERENCES tb_empresa (id));";
+
+  rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+
+  if (rc != SQLITE_OK)
+  {
+    fprintf(stderr, "SQL error: %s\n", zErrMsg);
+    sqlite3_free(zErrMsg);
+  }
+  else
+  {
+    fprintf(stdout, "Table created successfully\n");
+  }
 }
 
 int main(int argc, char *argv[])
@@ -416,8 +681,24 @@ int main(int argc, char *argv[])
       "button_dados_empresa_clicked", G_CALLBACK(button_dados_empresa_clicked),
       "button_list_funcionarios_clicked", G_CALLBACK(button_list_funcionarios_clicked),
       "button_list_clientes_clicked", G_CALLBACK(button_list_clientes_clicked),
+      "on_button_retornar_gerenciamento_clicked", G_CALLBACK(on_button_retornar_gerenciamento_clicked),
+      "button_listar_informacao_empresa_clicked", G_CALLBACK(button_listar_informacao_empresa_clicked),
       "button_gastos_residuos_clicked", G_CALLBACK(button_gastos_residuos_clicked),
       "button_return_to_home_clicked", G_CALLBACK(button_return_to_home_clicked),
+      "button_voltar_menu_clicked", G_CALLBACK(button_voltar_menu_clicked),
+      "button_cadastrar_residuos_clicked", G_CALLBACK(button_cadastrar_residuos_clicked),
+      "button_cadastrar_quantidade_residuos_clicked", G_CALLBACK(button_cadastrar_quantidade_residuos_clicked),
+      "button_voltar_lista_residuos_clicked", G_CALLBACK(button_voltar_lista_residuos_clicked),
+      "button_listar_clientes_clicked", G_CALLBACK(button_listar_clientes_clicked),
+      "button_cadastrar_clientes_clicked", G_CALLBACK(button_cadastrar_clientes_clicked),
+      "button_return_gerenciar_clicked", G_CALLBACK(button_return_gerenciar_clicked),
+      "button_adicionar_cliente_clicked", G_CALLBACK(button_adicionar_cliente_clicked),
+      "button_return_list_clientes_clicked", G_CALLBACK(button_return_list_clientes_clicked),
+      "button_listar_funcionarios_clicked", G_CALLBACK(button_listar_funcionarios_clicked),
+      "button_view_cadastrar_funcionario_clicked", G_CALLBACK(button_view_cadastrar_funcionario_clicked),
+      "button_voltar_gerenciamento_menu_clicked", G_CALLBACK(button_voltar_gerenciamento_menu_clicked),
+      "button_cad_funcionario_clicked", G_CALLBACK(button_cad_funcionario_clicked),
+      "button_return_lista_funcionarios_clicked", G_CALLBACK(button_return_lista_funcionarios_clicked),
       NULL);
 
   GtkWidget *connectButton;

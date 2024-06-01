@@ -1495,6 +1495,7 @@
                   <object class="GtkEntry" id="cliente_cp">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="input-purpose">number</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
