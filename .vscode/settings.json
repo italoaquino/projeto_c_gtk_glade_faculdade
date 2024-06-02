@@ -63,6 +63,8 @@
     "__threading_support": "c",
     "cstring": "c",
     "locale": "c",
-    "complex": "c"
+    "complex": "c",
+    "stdlib.h": "c",
+    "sqlite3.h": "c"
   }
 }

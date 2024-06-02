@@ -2,10 +2,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "sqlite3.h"
+#define FILE_NAME "text.txt"
 
 GtkStack *stack;
 GtkBuilder *builder;
 GtkWidget *window;
+GtkListStore *modeloArmazenamentoPessoa;
+GtkListStore *modeloArmazenamentoEmpresa;
+//GtkListStore *modeloArmazenamentoPessoa;
 sqlite3 *db = 0;
 int idEmpresa;
 
@@ -269,8 +273,27 @@ void button_sair_clicked(GtkWidget *widget, gpointer data)
 }
 void button_gerar_relatorio_geral_clicked(GtkWidget *widget, gpointer data)
 {
-  gtk_main_quit();
+
+  FILE* file_ptr = fopen(FILE_NAME, "w");
+  fclose(file_ptr);
+  //gtk_main_quit();
 }
+
+
+/* int callback(void *NotUsed, int argc, char **argv,
+                    char **azColName) {
+    NotUsed = 0;
+    FILE *fp ;
+    // Very dirty but it works for me
+    fp=fopen("/tmp/historyc.txt","a+");
+    for (int i = 0; i < argc; i++) {
+        fprintf(fp,"%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+    }
+    return 0;
+} */
+
+
+
 void button_gerar_relatorio_maior_producao_clicked(GtkWidget *widget, gpointer data)
 {
   gtk_main_quit();
@@ -283,10 +306,11 @@ void button_return_home_clicked(GtkWidget *widget, gpointer data)
 {
   gtk_stack_set_visible_child_name(stack, "view_gerenciar_empresa");
 }
-void button_dados_empresa_clicked(GtkWidget *widget, gpointer data)
-{
-  gtk_stack_set_visible_child_name(stack, "view_gerenciar_empresa");
-}
+// void button_dados_empresa_clicked(GtkWidget *widget, gpointer data)
+// {
+//   gtk_stack_set_visible_child_name(stack, "view_dados_empresa");
+//   //gtk_main_quit();gtk_stack_set_visible_child_name(stack, "view_dados_empresa");
+// }
 void button_list_funcionarios_clicked(GtkWidget *widget, gpointer data)
 {
   gtk_stack_set_visible_child_name(stack, "view_lista_funcionarios");
@@ -311,11 +335,91 @@ void button_return_to_home_clicked(GtkWidget *widget, gpointer data)
 {
   gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
 }
+int iterrUser(void *NotUsed, int argc, char **argv,
+                    char **azColName) {
+    
+    
+    //mensagem("Aviso", "Ocorreu um erro!", "dialog-emblem-deafult");
+    
+    /* NotUsed = 0;
+    FILE *fp ;
+    // Very dirty but it works for me
+    //fp=fopen("/Users/italoaquino/Downloads/test.txt","a+");
+    for (int i = 0; i < argc; i++) {
+      printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+      //  fprintf(fp,"%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+    } */
+    return 0;
+}
 
 void button_listar_clientes_clicked(GtkWidget *widget, gpointer data)
 {
+
+  //gtk_list_store_clear(modeloArmazenamento);
+//TODO: OLHA AQUI MANÉ!
+
+
+  char *err_msg = 0;
+
+  int rc;
+  sqlite3_stmt *handle_sql = 0;
+
+  char sqlStr[256];
+
+  char comando_sql[] = "select * from tb_clientes c where c.idEmpresa = ?";
+
+  rc = sqlite3_prepare_v2(db, comando_sql, -1, &handle_sql, 0);
+
+  if (rc != SQLITE_OK)
+  {
+    printf("Erro no prepare : %s\n", sqlite3_errmsg(db));
+    mensagem("Aviso", "Ocorreu um erro!", "dialog-emblem-deafult");
+  }//Lightbase
+  else
+  {
+    rc = sqlite3_bind_int(handle_sql, 1, idEmpresa);
+
+    if (rc != SQLITE_OK ) {
+        fprintf(stderr, "Failed to select data\n");
+        fprintf(stderr, "SQL error: %s\n", err_msg);
+        sqlite3_free(err_msg);
+        sqlite3_close(db);
+    }else{
+
+      rc = sqlite3_step(handle_sql);
+      int ncols = sqlite3_column_count(handle_sql);
+
+        GtkTreeIter iter;
+        gtk_list_store_clear(modeloArmazenamentoPessoa);
+
+
+      while(rc == SQLITE_ROW)
+      {
+        
+        gtk_list_store_append(modeloArmazenamentoPessoa, &iter);
+        gtk_list_store_set(modeloArmazenamentoPessoa, &iter, 
+                          0, sqlite3_column_text(handle_sql, 2),
+                          1, sqlite3_column_text(handle_sql, 4),
+                          -1);
+          rc = sqlite3_step(handle_sql);
+      }
+      sqlite3_finalize(handle_sql);
+    }
+
+  }
+
+
+  //gtk_list_store_append(modeloArmazenamentoPessoa, &iter);
+  //gtk_list_store_set(modeloArmazenamentoPessoa, &iter 
+                    //0, id);
+
+  //modeloArmazenamentoPessoa
+
   //gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
 }
+
+
+
 
 void button_cadastrar_clientes_clicked(GtkWidget *widget, gpointer data)
 {
@@ -388,6 +492,27 @@ void button_adicionar_cliente_clicked(GtkWidget *widget, gpointer data)
     }
   }
   //gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
+}
+
+
+void button_listar_funcionarios_clicked(GtkWidget *widget, gpointer data)
+{
+  //gtk_stack_set_visible_child_name(stack, "view_residuos");
+}
+
+void button_voltar_gerenciamento_menu_clicked(GtkWidget *widget, gpointer data)
+{
+  gtk_stack_set_visible_child_name(stack, "view_gerenciar_empresa");
+}
+
+void button_return_lista_funcionarios_clicked(GtkWidget *widget, gpointer data)
+{
+  gtk_stack_set_visible_child_name(stack, "view_lista_funcionarios");
+}
+
+void button_view_dados_empresa_clicked(GtkWidget *widget, gpointer data)
+{
+  gtk_stack_set_visible_child_name(stack, "view_dados_empresa");
 }
 
 void button_return_list_clientes_clicked(GtkWidget *widget, gpointer data)
@@ -531,21 +656,6 @@ void button_cad_funcionario_clicked(GtkWidget *widget, gpointer data)
   //gtk_stack_set_visible_child_name(stack, "view_residuos");
 }
 
-void button_listar_funcionarios_clicked(GtkWidget *widget, gpointer data)
-{
-  //gtk_stack_set_visible_child_name(stack, "view_residuos");
-}
-
-void button_voltar_gerenciamento_menu_clicked(GtkWidget *widget, gpointer data)
-{
-  gtk_stack_set_visible_child_name(stack, "view_gerenciar_empresa");
-}
-
-void button_return_lista_funcionarios_clicked(GtkWidget *widget, gpointer data)
-{
-  gtk_stack_set_visible_child_name(stack, "view_lista_funcionarios");
-}
-
 
 void initializeSqlite()
 {
@@ -678,7 +788,7 @@ int main(int argc, char *argv[])
       "button_gerar_relatorio_maior_producao_clicked", G_CALLBACK(button_gerar_relatorio_maior_producao_clicked),
       "button_gerar_relatorio_menor_producao_clicked", G_CALLBACK(button_gerar_relatorio_menor_producao_clicked),
       "button_return_home_clicked", G_CALLBACK(button_return_home_clicked),
-      "button_dados_empresa_clicked", G_CALLBACK(button_dados_empresa_clicked),
+      "button_dados_empresa_clicked", G_CALLBACK(button_relatorios_clicked),
       "button_list_funcionarios_clicked", G_CALLBACK(button_list_funcionarios_clicked),
       "button_list_clientes_clicked", G_CALLBACK(button_list_clientes_clicked),
       "on_button_retornar_gerenciamento_clicked", G_CALLBACK(on_button_retornar_gerenciamento_clicked),
@@ -699,7 +809,11 @@ int main(int argc, char *argv[])
       "button_voltar_gerenciamento_menu_clicked", G_CALLBACK(button_voltar_gerenciamento_menu_clicked),
       "button_cad_funcionario_clicked", G_CALLBACK(button_cad_funcionario_clicked),
       "button_return_lista_funcionarios_clicked", G_CALLBACK(button_return_lista_funcionarios_clicked),
+      "button_view_dados_empresa_clicked", G_CALLBACK(button_view_dados_empresa_clicked),
       NULL);
+
+  modeloArmazenamentoPessoa = GTK_LIST_STORE(gtk_builder_get_object(builder, "model_pessoa"));
+  modeloArmazenamentoEmpresa = GTK_LIST_STORE(gtk_builder_get_object(builder, "model_pessoa"));
 
   GtkWidget *connectButton;
   gtk_builder_connect_signals(builder, NULL);
