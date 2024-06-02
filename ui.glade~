@@ -934,11 +934,12 @@
                 <property name="can-focus">False</property>
                 <property name="layout-style">center</property>
                 <child type="center">
-                  <object class="GtkButton">
+                  <object class="GtkButton" id="button_view_dados_empresa">
                     <property name="label" translatable="yes">Empresa</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
+                    <signal name="clicked" handler="button_view_dados_empresa_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1108,7 +1109,7 @@
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn">
-                    <property name="title" translatable="yes">rAZAO</property>
+                    <property name="title" translatable="yes">Razão Social</property>
                     <child>
                       <object class="GtkCellRendererText"/>
                       <attributes>
@@ -1119,7 +1120,7 @@
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn">
-                    <property name="title" translatable="yes">Nome Social</property>
+                    <property name="title" translatable="yes">Nome Fantasia</property>
                     <child>
                       <object class="GtkCellRendererText"/>
                       <attributes>

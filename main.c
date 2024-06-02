@@ -9,7 +9,7 @@ GtkBuilder *builder;
 GtkWidget *window;
 GtkListStore *modeloArmazenamentoPessoa;
 GtkListStore *modeloArmazenamentoEmpresa;
-//GtkListStore *modeloArmazenamentoPessoa;
+// GtkListStore *modeloArmazenamentoPessoa;
 sqlite3 *db = 0;
 int idEmpresa;
 
@@ -32,7 +32,6 @@ void button_cadastrar_empresa_clicked(GtkWidget *widget, gpointer data)
 {
   gtk_stack_set_visible_child_name(stack, "view_cadastro_empresa");
 }
-
 
 void mensagem(char text[100], char secondary_text[100], char icon_name[100])
 {
@@ -75,12 +74,15 @@ void login(const char *email, const char *senha)
     {
       rc = sqlite3_step(handle_sql);
 
-      if(rc == SQLITE_ROW){
+      if (rc == SQLITE_ROW)
+      {
 
-        idEmpresa =  sqlite3_column_int(handle_sql, 0);
+        idEmpresa = sqlite3_column_int(handle_sql, 0);
         mensagem("Bem vindo!", "Usuário logada com sucesso!", "emblem-default");
         gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
-      }else{
+      }
+      else
+      {
         mensagem("Aviso", "Email ou senha incorretos!", "dialog-error");
       }
     }
@@ -259,10 +261,10 @@ void button_salvar_empresa_clicked(GtkWidget *widget, gpointer data)
   }
 }
 
-void button_relatorios_clicked(GtkWidget *widget, gpointer data)
+/* void button_relatorios_clicked(GtkWidget *widget, gpointer data)
 {
   gtk_stack_set_visible_child_name(stack, "view_dados_empresa");
-}
+} */
 void button_gerenciar_empresa_clicked(GtkWidget *widget, gpointer data)
 {
   gtk_stack_set_visible_child_name(stack, "view_gerenciar_empresa");
@@ -274,11 +276,10 @@ void button_sair_clicked(GtkWidget *widget, gpointer data)
 void button_gerar_relatorio_geral_clicked(GtkWidget *widget, gpointer data)
 {
 
-  FILE* file_ptr = fopen(FILE_NAME, "w");
+  FILE *file_ptr = fopen(FILE_NAME, "w");
   fclose(file_ptr);
-  //gtk_main_quit();
+  // gtk_main_quit();
 }
-
 
 /* int callback(void *NotUsed, int argc, char **argv,
                     char **azColName) {
@@ -291,8 +292,6 @@ void button_gerar_relatorio_geral_clicked(GtkWidget *widget, gpointer data)
     }
     return 0;
 } */
-
-
 
 void button_gerar_relatorio_maior_producao_clicked(GtkWidget *widget, gpointer data)
 {
@@ -317,16 +316,16 @@ void button_list_funcionarios_clicked(GtkWidget *widget, gpointer data)
 }
 void button_cadastrar_residuos_clicked(GtkWidget *widget, gpointer data)
 {
-   gtk_stack_set_visible_child_name(stack, "view_cadastrar_residuos");
+  gtk_stack_set_visible_child_name(stack, "view_cadastrar_residuos");
 }
 void button_voltar_menu_clicked(GtkWidget *widget, gpointer data)
 {
   gtk_stack_set_visible_child_name(stack, "view_gerenciar_empresa");
 }
-void button_list_clientes_clicked(GtkWidget *widget, gpointer data)
+/* void button_list_clientes_clicked(GtkWidget *widget, gpointer data)
 {
   gtk_stack_set_visible_child_name(stack, "view_list_clientes");
-}
+} */
 void button_gastos_residuos_clicked(GtkWidget *widget, gpointer data)
 {
   gtk_stack_set_visible_child_name(stack, "view_residuos");
@@ -336,28 +335,24 @@ void button_return_to_home_clicked(GtkWidget *widget, gpointer data)
   gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
 }
 int iterrUser(void *NotUsed, int argc, char **argv,
-                    char **azColName) {
-    
-    
-    //mensagem("Aviso", "Ocorreu um erro!", "dialog-emblem-deafult");
-    
-    /* NotUsed = 0;
-    FILE *fp ;
-    // Very dirty but it works for me
-    //fp=fopen("/Users/italoaquino/Downloads/test.txt","a+");
-    for (int i = 0; i < argc; i++) {
-      printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-      //  fprintf(fp,"%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-    } */
-    return 0;
+              char **azColName)
+{
+
+  // mensagem("Aviso", "Ocorreu um erro!", "dialog-emblem-deafult");
+
+  /* NotUsed = 0;
+  FILE *fp ;
+  // Very dirty but it works for me
+  //fp=fopen("/Users/italoaquino/Downloads/test.txt","a+");
+  for (int i = 0; i < argc; i++) {
+    printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+    //  fprintf(fp,"%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+  } */
+  return 0;
 }
 
 void button_listar_clientes_clicked(GtkWidget *widget, gpointer data)
 {
-
-  //gtk_list_store_clear(modeloArmazenamento);
-//TODO: OLHA AQUI MANÉ!
-
 
   char *err_msg = 0;
 
@@ -374,52 +369,49 @@ void button_listar_clientes_clicked(GtkWidget *widget, gpointer data)
   {
     printf("Erro no prepare : %s\n", sqlite3_errmsg(db));
     mensagem("Aviso", "Ocorreu um erro!", "dialog-emblem-deafult");
-  }//Lightbase
+  } // Lightbase
   else
   {
     rc = sqlite3_bind_int(handle_sql, 1, idEmpresa);
 
-    if (rc != SQLITE_OK ) {
-        fprintf(stderr, "Failed to select data\n");
-        fprintf(stderr, "SQL error: %s\n", err_msg);
-        sqlite3_free(err_msg);
-        sqlite3_close(db);
-    }else{
+    if (rc != SQLITE_OK)
+    {
+      fprintf(stderr, "Failed to select data\n");
+      fprintf(stderr, "SQL error: %s\n", err_msg);
+      sqlite3_free(err_msg);
+      sqlite3_close(db);
+    }
+    else
+    {
 
       rc = sqlite3_step(handle_sql);
       int ncols = sqlite3_column_count(handle_sql);
 
-        GtkTreeIter iter;
-        gtk_list_store_clear(modeloArmazenamentoPessoa);
+      GtkTreeIter iter;
+      gtk_list_store_clear(modeloArmazenamentoPessoa);
 
-
-      while(rc == SQLITE_ROW)
+      while (rc == SQLITE_ROW)
       {
-        
+
         gtk_list_store_append(modeloArmazenamentoPessoa, &iter);
-        gtk_list_store_set(modeloArmazenamentoPessoa, &iter, 
-                          0, sqlite3_column_text(handle_sql, 2),
-                          1, sqlite3_column_text(handle_sql, 4),
-                          -1);
-          rc = sqlite3_step(handle_sql);
+        gtk_list_store_set(modeloArmazenamentoPessoa, &iter,
+                           0, sqlite3_column_text(handle_sql, 2),
+                           1, sqlite3_column_text(handle_sql, 4),
+                           -1);
+        rc = sqlite3_step(handle_sql);
       }
       sqlite3_finalize(handle_sql);
     }
-
   }
 
+  // gtk_list_store_append(modeloArmazenamentoPessoa, &iter);
+  // gtk_list_store_set(modeloArmazenamentoPessoa, &iter
+  // 0, id);
 
-  //gtk_list_store_append(modeloArmazenamentoPessoa, &iter);
-  //gtk_list_store_set(modeloArmazenamentoPessoa, &iter 
-                    //0, id);
+  // modeloArmazenamentoPessoa
 
-  //modeloArmazenamentoPessoa
-
-  //gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
+  // gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
 }
-
-
-
 
 void button_cadastrar_clientes_clicked(GtkWidget *widget, gpointer data)
 {
@@ -442,10 +434,9 @@ void button_adicionar_cliente_clicked(GtkWidget *widget, gpointer data)
 
   nomeInput = GTK_WIDGET(gtk_builder_get_object(builder, "cliente_nom"));
   cpfInput = GTK_WIDGET(gtk_builder_get_object(builder, "cliente_cp"));
-  
+
   const char *nome = gtk_entry_get_text(GTK_ENTRY(nomeInput));
   const char *cpf = gtk_entry_get_text(GTK_ENTRY(cpfInput));
-  
 
   if (strcmp(nome, "") == 0)
   {
@@ -455,7 +446,7 @@ void button_adicionar_cliente_clicked(GtkWidget *widget, gpointer data)
   {
     mensagem("Aviso", "Campo 'CPF' obrigatório!", "dialog-error");
   }
- 
+
   sqlite3_stmt *handle_sql = 0;
 
   char sqlStr[256];
@@ -471,14 +462,14 @@ void button_adicionar_cliente_clicked(GtkWidget *widget, gpointer data)
   }
   else
   {
-    //const char *id= id;
+    // const char *id= id;
     rc = sqlite3_bind_int(handle_sql, 1, idEmpresa);
     rc = sqlite3_bind_text(handle_sql, 2, nome, -1, NULL);
     rc = sqlite3_bind_text(handle_sql, 3, cpf, -1, NULL);
 
-  /*   rc = sqlite3_bind_int(handle_sql, 1, id, -1, NULL);
-    rc = sqlite3_bind_int(handle_sql, 2, quantidadeResiduos, -1, NULL);
-    rc = sqlite3_bind_int(handle_sql, 3, valorEstimado, -1, NULL); */
+    /*   rc = sqlite3_bind_int(handle_sql, 1, id, -1, NULL);
+      rc = sqlite3_bind_int(handle_sql, 2, quantidadeResiduos, -1, NULL);
+      rc = sqlite3_bind_int(handle_sql, 3, valorEstimado, -1, NULL); */
     if (rc != SQLITE_OK)
     {
       printf("Erro no prepare : %s\n", sqlite3_errmsg(db));
@@ -491,13 +482,12 @@ void button_adicionar_cliente_clicked(GtkWidget *widget, gpointer data)
       gtk_stack_set_visible_child_name(stack, "view_residuos");
     }
   }
-  //gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
+  // gtk_stack_set_visible_child_name(stack, "view_menu_inicial");
 }
-
 
 void button_listar_funcionarios_clicked(GtkWidget *widget, gpointer data)
 {
-  //gtk_stack_set_visible_child_name(stack, "view_residuos");
+  // gtk_stack_set_visible_child_name(stack, "view_residuos");
 }
 
 void button_voltar_gerenciamento_menu_clicked(GtkWidget *widget, gpointer data)
@@ -513,6 +503,112 @@ void button_return_lista_funcionarios_clicked(GtkWidget *widget, gpointer data)
 void button_view_dados_empresa_clicked(GtkWidget *widget, gpointer data)
 {
   gtk_stack_set_visible_child_name(stack, "view_dados_empresa");
+
+  char *err_msg = 0;
+
+  int rc;
+  sqlite3_stmt *handle_sql = 0;
+
+  char sqlStr[256];
+
+  char comando_sql[] = "select * from tb_empresa e where e.id = ?";
+
+  rc = sqlite3_prepare_v2(db, comando_sql, -1, &handle_sql, 0);
+
+  if (rc != SQLITE_OK)
+  {
+    printf("Erro no prepare : %s\n", sqlite3_errmsg(db));
+    mensagem("Aviso", "Ocorreu um erro!", "dialog-emblem-deafult");
+  } // Lightbase
+  else
+  {
+    rc = sqlite3_bind_int(handle_sql, 1, idEmpresa);
+
+    if (rc != SQLITE_OK)
+    {
+      fprintf(stderr, "Failed to select data\n");
+      fprintf(stderr, "SQL error: %s\n", err_msg);
+      sqlite3_free(err_msg);
+      sqlite3_close(db);
+    }
+    else
+    {
+
+      rc = sqlite3_step(handle_sql);
+      int ncols = sqlite3_column_count(handle_sql);
+
+      GtkTreeIter iter;
+      gtk_list_store_clear(modeloArmazenamentoEmpresa);
+
+      while (rc == SQLITE_ROW)
+      {
+        gtk_list_store_append(modeloArmazenamentoEmpresa, &iter);
+        gtk_list_store_set(modeloArmazenamentoEmpresa, &iter,
+                          0, sqlite3_column_text(handle_sql, 1),
+                          1, sqlite3_column_text(handle_sql, 2),
+                          2, sqlite3_column_text(handle_sql, 3),
+                          3, sqlite3_column_text(handle_sql, 4),
+                          4, sqlite3_column_text(handle_sql, 5),
+                          5, sqlite3_column_text(handle_sql, 6),
+                          6, sqlite3_column_text(handle_sql, 7),
+
+                          7, sqlite3_column_text(handle_sql, 8),
+                          8, sqlite3_column_text(handle_sql, 9),
+                          9, sqlite3_column_text(handle_sql, 10),
+                          10, sqlite3_column_text(handle_sql, 11),
+                          11, sqlite3_column_text(handle_sql, 12),
+                          12, sqlite3_column_text(handle_sql, 13),
+                          13, sqlite3_column_text(handle_sql, 14),
+                          -1);
+
+/* 
+nomeEmpresa
+nomeResponsavel
+cpfResponsavel
+cnpj
+razaoSocial
+nomeFantasia
+telefone
+
+rua
+numero
+bairro
+cidade
+estado
+cep
+email
+ */
+
+/* 
+ 0-  id : '1'
+ 1 - nome:'Lightbase' 
+ 2- responsavel: 'Jairo'
+ 3- cpf '1231321312'
+ 4- cnpj '1231231'
+ 5- razaoSocial 'BRLIGHT' 
+ 6- nomeFantasia'LIGHTBASE'
+ 7- telefone '619832913921'
+ 8 - rua 'QUALQUER'
+ 9 -numero '13'
+ 10- bairro 'ASA SUL'
+ 11- cidade 'BRASILIA'
+ 12 - estado 'DF'
+ 13 - cep '3213213123122'
+ 14- email: 'lightbase@gmail.com'
+ 15 -senha 'Lightbase'
+ */
+       /*  for (int i = 0; i < ncols; i++)
+        {
+          fprintf(stderr, "'%s' ", sqlite3_column_text(handle_sql, i));
+        }
+ */
+        fprintf(stderr, "\n");
+        rc = sqlite3_step(handle_sql);
+      }
+      sqlite3_finalize(handle_sql);
+    }
+  }
+  // TODO: Olha aqui
 }
 
 void button_return_list_clientes_clicked(GtkWidget *widget, gpointer data)
@@ -534,10 +630,9 @@ void button_cadastrar_quantidade_residuos_clicked(GtkWidget *widget, gpointer da
 
   valorEstimadoInput = GTK_WIDGET(gtk_builder_get_object(builder, "quantidade_residuos"));
   quantidadeResiduosInput = GTK_WIDGET(gtk_builder_get_object(builder, "valor_estimado"));
-  
+
   const char *valorEstimado = gtk_entry_get_text(GTK_ENTRY(valorEstimadoInput));
   const char *quantidadeResiduos = gtk_entry_get_text(GTK_ENTRY(quantidadeResiduosInput));
-  
 
   if (strcmp(valorEstimado, "") == 0)
   {
@@ -547,7 +642,7 @@ void button_cadastrar_quantidade_residuos_clicked(GtkWidget *widget, gpointer da
   {
     mensagem("Aviso", "Campo 'Quantidade de Resíduos' obrigatório!", "dialog-error");
   }
- 
+
   sqlite3_stmt *handle_sql = 0;
 
   char sqlStr[256];
@@ -563,14 +658,14 @@ void button_cadastrar_quantidade_residuos_clicked(GtkWidget *widget, gpointer da
   }
   else
   {
-    //const char *id= id;
+    // const char *id= id;
     rc = sqlite3_bind_int(handle_sql, 1, idEmpresa);
     rc = sqlite3_bind_text(handle_sql, 2, quantidadeResiduos, -1, NULL);
     rc = sqlite3_bind_text(handle_sql, 3, valorEstimado, -1, NULL);
 
-  /*   rc = sqlite3_bind_int(handle_sql, 1, id, -1, NULL);
-    rc = sqlite3_bind_int(handle_sql, 2, quantidadeResiduos, -1, NULL);
-    rc = sqlite3_bind_int(handle_sql, 3, valorEstimado, -1, NULL); */
+    /*   rc = sqlite3_bind_int(handle_sql, 1, id, -1, NULL);
+      rc = sqlite3_bind_int(handle_sql, 2, quantidadeResiduos, -1, NULL);
+      rc = sqlite3_bind_int(handle_sql, 3, valorEstimado, -1, NULL); */
     if (rc != SQLITE_OK)
     {
       printf("Erro no prepare : %s\n", sqlite3_errmsg(db));
@@ -583,8 +678,6 @@ void button_cadastrar_quantidade_residuos_clicked(GtkWidget *widget, gpointer da
       gtk_stack_set_visible_child_name(stack, "view_residuos");
     }
   }
-
-
 }
 void button_voltar_lista_residuos_clicked(GtkWidget *widget, gpointer data)
 {
@@ -605,10 +698,9 @@ void button_cad_funcionario_clicked(GtkWidget *widget, gpointer data)
 
   funcionarioNomeInput = GTK_WIDGET(gtk_builder_get_object(builder, "funcionario_nome"));
   funcionarioCpfInput = GTK_WIDGET(gtk_builder_get_object(builder, "funcionario_cpf"));
-  
+
   const char *funcionarioNome = gtk_entry_get_text(GTK_ENTRY(funcionarioNomeInput));
   const char *funcionarioCpf = gtk_entry_get_text(GTK_ENTRY(funcionarioCpfInput));
-  
 
   if (strcmp(funcionarioNome, "") == 0)
   {
@@ -618,7 +710,7 @@ void button_cad_funcionario_clicked(GtkWidget *widget, gpointer data)
   {
     mensagem("Aviso", "Campo 'CPF' obrigatório!", "dialog-error");
   }
- 
+
   sqlite3_stmt *handle_sql = 0;
 
   char sqlStr[256];
@@ -634,7 +726,7 @@ void button_cad_funcionario_clicked(GtkWidget *widget, gpointer data)
   }
   else
   {
-    //const char *id= id;
+    // const char *id= id;
     rc = sqlite3_bind_int(handle_sql, 1, idEmpresa);
     rc = sqlite3_bind_text(handle_sql, 2, funcionarioNome, -1, NULL);
     rc = sqlite3_bind_text(handle_sql, 3, funcionarioCpf, -1, NULL);
@@ -652,10 +744,8 @@ void button_cad_funcionario_clicked(GtkWidget *widget, gpointer data)
     }
   }
 
-
-  //gtk_stack_set_visible_child_name(stack, "view_residuos");
+  // gtk_stack_set_visible_child_name(stack, "view_residuos");
 }
-
 
 void initializeSqlite()
 {
@@ -700,7 +790,7 @@ void initializeSqlite()
     fprintf(stdout, "Table created successfully\n");
   }
 
-   sql = "CREATE TABLE tb_residuos("
+  sql = "CREATE TABLE tb_residuos("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
         "idEmpresa      INTEGER NOT NULL,"
         "quantidadeResiduos         int    NOT NULL,"
@@ -720,8 +810,7 @@ void initializeSqlite()
     fprintf(stdout, "Table created successfully\n");
   }
 
-
-   sql = "CREATE TABLE tb_clientes("
+  sql = "CREATE TABLE tb_clientes("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
         "idEmpresa   int    NOT NULL,"
         "nome        TEXT    NOT NULL,"
@@ -741,8 +830,7 @@ void initializeSqlite()
     fprintf(stdout, "Table created successfully\n");
   }
 
-
-   sql = "CREATE TABLE tb_funcionarios("
+  sql = "CREATE TABLE tb_funcionarios("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
         "idEmpresa   int    NOT NULL,"
         "nome        TEXT    NOT NULL,"
@@ -781,16 +869,16 @@ int main(int argc, char *argv[])
       "on_button_login_clicked", G_CALLBACK(on_button_login_clicked),
       "button_voltar_tela_cadastro_empresa_clicked", G_CALLBACK(button_voltar_tela_cadastro_empresa_clicked),
       "button_salvar_empresa_clicked", G_CALLBACK(button_salvar_empresa_clicked),
-      "button_relatorios_clicked", G_CALLBACK(button_relatorios_clicked),
+      "button_relatorios_clicked", G_CALLBACK(button_view_dados_empresa_clicked),
       "button_gerenciar_empresa_clicked", G_CALLBACK(button_gerenciar_empresa_clicked),
       "button_sair_clicked", G_CALLBACK(button_sair_clicked),
       "button_gerar_relatorio_geral_clicked", G_CALLBACK(button_gerar_relatorio_geral_clicked),
       "button_gerar_relatorio_maior_producao_clicked", G_CALLBACK(button_gerar_relatorio_maior_producao_clicked),
       "button_gerar_relatorio_menor_producao_clicked", G_CALLBACK(button_gerar_relatorio_menor_producao_clicked),
       "button_return_home_clicked", G_CALLBACK(button_return_home_clicked),
-      "button_dados_empresa_clicked", G_CALLBACK(button_relatorios_clicked),
+      "button_dados_empresa_clicked", G_CALLBACK(button_view_dados_empresa_clicked),
       "button_list_funcionarios_clicked", G_CALLBACK(button_list_funcionarios_clicked),
-      "button_list_clientes_clicked", G_CALLBACK(button_list_clientes_clicked),
+      "button_list_clientes_clicked", G_CALLBACK(button_return_list_clientes_clicked),
       "on_button_retornar_gerenciamento_clicked", G_CALLBACK(on_button_retornar_gerenciamento_clicked),
       "button_listar_informacao_empresa_clicked", G_CALLBACK(button_listar_informacao_empresa_clicked),
       "button_gastos_residuos_clicked", G_CALLBACK(button_gastos_residuos_clicked),
@@ -813,7 +901,7 @@ int main(int argc, char *argv[])
       NULL);
 
   modeloArmazenamentoPessoa = GTK_LIST_STORE(gtk_builder_get_object(builder, "model_pessoa"));
-  modeloArmazenamentoEmpresa = GTK_LIST_STORE(gtk_builder_get_object(builder, "model_pessoa"));
+  modeloArmazenamentoEmpresa = GTK_LIST_STORE(gtk_builder_get_object(builder, "modal_empresa"));
 
   GtkWidget *connectButton;
   gtk_builder_connect_signals(builder, NULL);

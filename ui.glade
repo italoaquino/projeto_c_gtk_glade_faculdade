@@ -1109,7 +1109,7 @@
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn">
-                    <property name="title" translatable="yes">rAZAO</property>
+                    <property name="title" translatable="yes">Razão Social</property>
                     <child>
                       <object class="GtkCellRendererText"/>
                       <attributes>
@@ -1120,7 +1120,7 @@
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn">
-                    <property name="title" translatable="yes">Nome Social</property>
+                    <property name="title" translatable="yes">Nome Fantasia</property>
                     <child>
                       <object class="GtkCellRendererText"/>
                       <attributes>
@@ -1229,20 +1229,6 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="layout-style">center</property>
-                <child>
-                  <object class="GtkButton" id="button_listar_informacao_empresa">
-                    <property name="label" translatable="yes">button</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
-                    <signal name="clicked" handler="button_listar_informacao_empresa_clicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
                 <child>
                   <object class="GtkButton" id="button_retornar_gerenciamento">
                     <property name="label">gtk-media-rewind</property>

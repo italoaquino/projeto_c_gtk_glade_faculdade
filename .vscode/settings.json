@@ -65,6 +65,10 @@
     "locale": "c",
     "complex": "c",
     "stdlib.h": "c",
-    "sqlite3.h": "c"
+    "sqlite3.h": "c",
+    "array": "c",
+    "string": "c",
+    "string_view": "c",
+    "vector": "c"
   }
 }
